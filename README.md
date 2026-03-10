@@ -1,7 +1,7 @@
 # Mini SIEM - Log Analyzer 🕵️‍♂️💻
 
 Mini SIEM educativo para analizar logs de servidor y detectar actividad sospechosa en tiempo real.
-
+![Dashboard](images/Dashboards.png)
 ---
 
 ## 🔹 Funcionalidades

@@ -3,7 +3,7 @@ from supabase import create_client  #importa la funcion de la librería de Supab
 
 # conexión Supabase
 url = "https://xdubkpxanuxhqkxvmcyp.supabase.co"
-key = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InhkdWJrcHhhbnV4aHFreHZtY3lwIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzI3NDI0MTksImV4cCI6MjA4ODMxODQxOX0.j3K3LJWo2M-Yyr3AHs87ooFsPcQeVffQV55M5yiDpWQ"  #APIKEY
+key = "YOUR_SUPABASE_KEY"  #APIKEY
 
 supabase = create_client(url, key) #Python envía los datos a la BD. 
 

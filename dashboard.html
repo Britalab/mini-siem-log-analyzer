@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<title>Mini SIEM Dashboard</title>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+<style>
+
+body{
+    font-family: Arial;
+    background:#0f172a;
+    color:white;
+    margin:0;
+}
+
+header{
+    background:#1e3a8a;
+    padding:20px;
+    text-align:center;
+    font-size:28px;
+    font-weight:bold;
+}
+
+.container{
+    padding:30px;
+}
+
+.cards{
+    display:flex;
+    gap:20px;
+    margin-bottom:25px;
+}
+
+.stat{
+    flex:1;
+    background:#1e293b;
+    padding:25px;
+    border-radius:10px;
+    text-align:center;
+}
+
+.stat h3{
+    margin:0;
+    color:#93c5fd;
+}
+
+.stat p{
+    font-size:30px;
+    margin-top:10px;
+}
+
+.card{
+    background:#1e293b;
+    border-radius:10px;
+    padding:20px;
+}
+
+table{
+    width:100%;
+    border-collapse:collapse;
+    margin-top:20px;
+}
+
+th{
+    background:#2563eb;
+    padding:12px;
+    text-align:left;
+}
+
+td{
+    padding:10px;
+    border-bottom:1px solid #334155;
+}
+
+tr:hover{
+    background:#0f172a;
+}
+
+.type-normal{color:#22c55e;}
+.type-failed_login{color:#facc15;}
+.type-brute_force{color:#ef4444;}
+.type-endpoint_scan{color:#f97316;}
+
+</style>
+
+</head>
+
+<body>
+
+<header>
+Mini SIEM – Security Dashboard
+</header>
+
+<div class="container">
+
+<div class="cards">
+
+<div class="stat">
+<h3>Total eventos</h3>
+<p id="total">0</p>
+</div>
+
+<div class="stat">
+<h3>Logins fallidos</h3>
+<p id="failed">0</p>
+</div>
+
+<div class="stat">
+<h3>Brute force</h3>
+<p id="brute">0</p>
+</div>
+
+<div class="stat">
+<h3>Endpoint scans</h3>
+<p id="scan">0</p>
+</div>
+
+</div>
+
+<div class="card">
+
+<h2>Últimos eventos</h2>
+
+<table>
+
+<thead>
+<tr>
+<th>ID</th>
+<th>Actividad</th>
+<th>Tipo</th>
+<th>Fecha</th>
+</tr>
+</thead>
+
+<tbody id="events">
+</tbody>
+
+</table>
+
+</div>
+
+</div>
+
+<script>
+
+const SUPABASE_URL = "https://xdubkpxanuxhqkxvmcyp.supabase.co"
+const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InhkdWJrcHhhbnV4aHFreHZtY3lwIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzI3NDI0MTksImV4cCI6MjA4ODMxODQxOX0.j3K3LJWo2M-Yyr3AHs87ooFsPcQeVffQV55M5yiDpWQ"
+
+const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_KEY)
+
+async function loadEvents(){
+
+const { data, error } = await supabaseClient
+.from("activities")
+.select("*")
+.order("created_at",{ascending:false})
+.limit(50)
+
+if(error){
+console.error(error)
+return
+}
+
+const table = document.getElementById("events")
+table.innerHTML=""
+
+let failed=0
+let brute=0
+let scan=0
+
+data.forEach(event=>{
+
+if(event.type==="failed_login") failed++
+if(event.type==="brute_force") brute++
+if(event.type==="endpoint_scan") scan++
+
+const row=`
+<tr>
+<td>${event.id}</td>
+<td>${event.activity}</td>
+<td class="type-${event.type}">${event.type}</td>
+<td>${event.created_at}</td>
+</tr>
+`
+
+table.innerHTML+=row
+
+})
+
+document.getElementById("total").innerText=data.length
+document.getElementById("failed").innerText=failed
+document.getElementById("brute").innerText=brute
+document.getElementById("scan").innerText=scan
+
+}
+
+loadEvents()
+
+setInterval(loadEvents,5000)
+
+</script>
+
+</body>
+</html>
